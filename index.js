@@ -120,6 +120,7 @@ class EventView {
     endCell.textContent = event.endDate;
     editButton.textContent = "Edit";
     deleteButton.textContent = "Delete";
+    deleteButton.id = `delete-button-${event.id}`;
 
     actionsCell.appendChild(editButton);
     actionsCell.appendChild(deleteButton);
@@ -128,6 +129,7 @@ class EventView {
     row.appendChild(startCell);
     row.appendChild(endCell);
     row.appendChild(actionsCell);
+    row.id = `event-row-${event.id}`;
 
     return row;
   }
@@ -177,6 +179,11 @@ class EventView {
 
     return { row, inputField, startDate, endDate, saveButton, cancelButton };
   }
+
+  deleteEventItem(id) {
+    const row = document.getElementById(`event-row-${id}`);
+    this.eventTable.removeChild(row);
+  }
 }
 
 // MVC - Controller
@@ -223,7 +230,15 @@ class EventController {
     });
   }
 
-  setUpDeleteEvent() {}
+  setUpDeleteEvent() {
+    this.model.getEvents().forEach((event) => {
+      const deleteButton = document.getElementById(`delete-button-${event.id}`);
+      deleteButton.addEventListener("click", () => {
+        this.model.deleteEvent(event.id);
+        this.view.deleteEventItem(event.id);
+      });
+    });
+  }
 }
 
 // Driver Code
