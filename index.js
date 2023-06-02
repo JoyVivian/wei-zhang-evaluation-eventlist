@@ -143,9 +143,13 @@ class EventView {
     this.addEventButton = document.getElementById("add-event-button");
   }
 
-  // Create new event item.
   createEventItem(event) {
     const row = document.createElement("tr");
+
+    // Set the style of the row.
+    row.setAttribute("style", "background-color: #e6e2d3;");
+    row.style.marginBottom = "10px";
+
     const eventCell = document.createElement("td");
     const startCell = document.createElement("td");
     const endCell = document.createElement("td");
@@ -153,18 +157,73 @@ class EventView {
     const editButton = document.createElement("button");
     const deleteButton = document.createElement("button");
 
+    editButton.setAttribute(
+      "style",
+      "background-color: #008cba; border: none; padding: 0; border-radius: 4px; cursor: pointer; margin-left: 1px; margin-right: 1px; width: 24px; height: 24px;"
+    );
+
+    const svgIcon = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "svg"
+    );
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
     eventCell.textContent = event.eventName;
     startCell.textContent = event.startDate;
     endCell.textContent = event.endDate;
-    editButton.textContent = "Edit";
+
+    svgIcon.setAttribute("focusable", "false");
+    svgIcon.setAttribute("aria-hidden", "true");
+    svgIcon.setAttribute("viewBox", "0 0 24 24");
+    svgIcon.setAttribute("data-testid", "EditIcon");
+    svgIcon.setAttribute("aria-label", "fontSize small");
+    svgIcon.setAttribute("fill", "white");
+
+    path.setAttribute(
+      "d",
+      "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+    );
+
     // editButton.id = `edit-button-${event.id}`;
     editButton.classList.add("edit-button");
     editButton.dataset.eventId = event.id;
+    svgIcon.appendChild(path);
+    editButton.appendChild(svgIcon);
 
-    deleteButton.textContent = "Delete";
-    // deleteButton.id = `delete-button-${event.id}`;
+    // deleteButton.textContent = "Delete";
+    // deleteButton.classList.add("delete-button");
+    // deleteButton.dataset.eventId = event.id;
+
+    deleteButton.setAttribute(
+      "style",
+      "background-color: #dc3545; border: none; padding: 0; border-radius: 4px; cursor: pointer; margin-left: 1px; margin-right: 1px; width: 24px; height: 24px;"
+    );
+
+    const svgIconDelete = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "svg"
+    );
+    const pathDelete = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "path"
+    );
+
+    svgIconDelete.setAttribute("focusable", "false");
+    svgIconDelete.setAttribute("aria-hidden", "true");
+    svgIconDelete.setAttribute("viewBox", "0 0 24 24");
+    svgIconDelete.setAttribute("data-testid", "DeleteIcon");
+    svgIconDelete.setAttribute("aria-label", "fontSize small");
+    svgIconDelete.setAttribute("fill", "white");
+
+    pathDelete.setAttribute(
+      "d",
+      "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+    );
+
     deleteButton.classList.add("delete-button");
     deleteButton.dataset.eventId = event.id;
+    svgIconDelete.appendChild(pathDelete);
+    deleteButton.appendChild(svgIconDelete);
 
     actionsCell.appendChild(editButton);
     actionsCell.appendChild(deleteButton);
@@ -190,6 +249,40 @@ class EventView {
     });
   }
 
+  // addEmptyEvent() {
+  //   const row = document.createElement("tr");
+  //   const inputCell = document.createElement("td");
+  //   const startCell = document.createElement("td");
+  //   const endCell = document.createElement("td");
+  //   const actionsCell = document.createElement("td");
+  //   const saveButton = document.createElement("button");
+  //   const cancelButton = document.createElement("button");
+  //   const inputField = document.createElement("input");
+  //   const startDate = document.createElement("input");
+  //   const endDate = document.createElement("input");
+
+  //   inputField.type = "text";
+  //   startDate.type = "date";
+  //   endDate.type = "date";
+  //   saveButton.textContent = "Save";
+  //   cancelButton.textContent = "Cancel";
+
+  //   inputCell.appendChild(inputField);
+  //   startCell.appendChild(startDate);
+  //   endCell.appendChild(endDate);
+  //   actionsCell.appendChild(saveButton);
+  //   actionsCell.appendChild(cancelButton);
+
+  //   row.appendChild(inputCell);
+  //   row.appendChild(startCell);
+  //   row.appendChild(endCell);
+  //   row.appendChild(actionsCell);
+
+  //   this.eventTable.appendChild(row);
+
+  //   return { row, inputField, startDate, endDate, saveButton, cancelButton };
+  // }
+
   addEmptyEvent() {
     const row = document.createElement("tr");
     const inputCell = document.createElement("td");
@@ -205,8 +298,46 @@ class EventView {
     inputField.type = "text";
     startDate.type = "date";
     endDate.type = "date";
-    saveButton.textContent = "Save";
-    cancelButton.textContent = "Cancel";
+
+    // Style the save button
+    saveButton.style.backgroundColor = "#008cba";
+    saveButton.style.border = "none";
+    saveButton.style.padding = "0";
+    saveButton.style.borderRadius = "4px";
+    saveButton.style.cursor = "pointer";
+    saveButton.style.marginLeft = "1px";
+    saveButton.style.marginRight = "1px";
+    saveButton.style.width = "24px";
+    saveButton.style.height = "24px";
+    saveButton.style.display = "flex";
+    saveButton.style.justifyContent = "center";
+    saveButton.style.alignItems = "center";
+    saveButton.innerHTML =
+      '<svg focusable viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M12 6V18M18 12H6" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    // Style the save button
+    saveButton.style.display = "inline-flex";
+    saveButton.style.marginRight = "8px";
+
+    // Style the cancel button
+    cancelButton.style.backgroundColor = "transparent";
+    cancelButton.style.border = "none";
+    cancelButton.style.padding = "0";
+    cancelButton.style.width = "24px";
+    cancelButton.style.height = "24px";
+    cancelButton.style.display = "flex";
+    cancelButton.style.justifyContent = "center";
+    cancelButton.style.alignItems = "center";
+    cancelButton.style.backgroundColor = "#dc3545";
+
+    // cancelButton.innerHTML =
+    //   '<svg focusable="false" aria-hidden="true" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M19.587 16.001l6.096 6.096c0.396 0.396 0.396 1.039 0 1.435l-2.151 2.151c-0.396 0.396-1.038 0.396-1.435 0l-6.097-6.096-6.097 6.096c-0.396 0.396-1.038 0.396-1.434 0l-2.152-2.151c-0.396-0.396-0.396-1.038 0-1.435l6.097-6.096-6.097-6.097c-0.396-0.396-0.396-1.039 0-1.435l2.153-2.151c0.396-0.396 1.038-0.396 1.434 0l6.096 6.097 6.097-6.097c0.396-0.396 1.038-0.396 1.435 0l2.151 2.152c0.396 0.396 0.396 1.038 0 1.435l-6.096 6.096z"></path></svg>';
+
+    cancelButton.innerHTML =
+      '<svg focusable="false" aria-hidden="true" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M19.587 16.001l6.096 6.096c0.396 0.396 0.396 1.039 0 1.435l-2.151 2.151c-0.396 0.396-1.038 0.396-1.435 0l-6.097-6.096-6.097 6.096c-0.396 0.396-1.038 0.396-1.434 0l-2.152-2.151c-0.396-0.396-0.396-1.038 0-1.435l6.097-6.096-6.097-6.097c-0.396-0.396-0.396-1.039 0-1.435l2.153-2.151c0.396-0.396 1.038-0.396 1.434 0l6.096 6.097 6.097-6.097c0.396-0.396 1.038-0.396 1.435 0l2.151 2.152c0.396 0.396 0.396 1.038 0 1.435l-6.096 6.096z" fill="#ffffff"></path></svg>';
+
+    // Style the cancel button
+    cancelButton.style.display = "inline-flex";
 
     inputCell.appendChild(inputField);
     startCell.appendChild(startDate);
@@ -299,51 +430,111 @@ class EventController {
     });
   }
 
+  // setUpEventTable() {
+  //   this.view.eventTable.addEventListener("click", (event) => {
+  //     if (event.target.matches(".edit-button")) {
+  //       const eventId = event.target.dataset.eventId;
+  //       const eventItem = this.model.getEventById(eventId);
+
+  //       console.log(eventItem);
+
+  //       if (eventItem) {
+  //         const {
+  //           inputField,
+  //           startDate,
+  //           endDate,
+  //           saveButton,
+  //           cancelButton,
+  //           row,
+  //         } = this.view.editEventItem(eventItem);
+
+  //         saveButton.addEventListener("click", async () => {
+  //           const updatedEvent = {
+  //             eventName: inputField.value,
+  //             startDate: startDate.value,
+  //             endDate: endDate.value,
+  //           };
+
+  //           const editedEvent = await this.model.editEvent(
+  //             eventItem.id,
+  //             updatedEvent
+  //           );
+  //           this.view.eventTable.removeChild(row);
+  //           this.view.appendEvent(editedEvent);
+  //         });
+
+  //         cancelButton.addEventListener("click", () => {
+  //           this.view.eventTable.removeChild(row);
+  //           this.view.appendEvent(eventItem);
+  //         });
+  //       }
+  //     } else if (event.target.matches(".delete-button")) {
+  //       const eventId = event.target.dataset.eventId;
+  //       const eventItem = this.model.getEventById(eventId);
+  //       if (eventItem) {
+  //         this.model.deleteEvent(eventItem.id);
+  //         this.view.deleteEventItem(eventItem.id);
+  //       }
+  //     }
+  //   });
+  // }
+
   setUpEventTable() {
     this.view.eventTable.addEventListener("click", (event) => {
-      if (event.target.matches(".edit-button")) {
-        const eventId = event.target.dataset.eventId;
-        const eventItem = this.model.getEventById(eventId);
+      let targetElement = event.target;
 
-        console.log(eventItem);
+      // Check if the clicked element is a button or its parent is a button
+      while (targetElement !== null) {
+        if (targetElement.matches(".edit-button")) {
+          const eventId = targetElement.dataset.eventId;
+          const eventItem = this.model.getEventById(eventId);
 
-        if (eventItem) {
-          const {
-            inputField,
-            startDate,
-            endDate,
-            saveButton,
-            cancelButton,
-            row,
-          } = this.view.editEventItem(eventItem);
+          if (eventItem) {
+            const {
+              inputField,
+              startDate,
+              endDate,
+              saveButton,
+              cancelButton,
+              row,
+            } = this.view.editEventItem(eventItem);
 
-          saveButton.addEventListener("click", async () => {
-            const updatedEvent = {
-              eventName: inputField.value,
-              startDate: startDate.value,
-              endDate: endDate.value,
-            };
+            saveButton.addEventListener("click", async () => {
+              const updatedEvent = {
+                eventName: inputField.value,
+                startDate: startDate.value,
+                endDate: endDate.value,
+              };
 
-            const editedEvent = await this.model.editEvent(
-              eventItem.id,
-              updatedEvent
-            );
-            this.view.eventTable.removeChild(row);
-            this.view.appendEvent(editedEvent);
-          });
+              const editedEvent = await this.model.editEvent(
+                eventItem.id,
+                updatedEvent
+              );
+              this.view.eventTable.removeChild(row);
+              this.view.appendEvent(editedEvent);
+            });
 
-          cancelButton.addEventListener("click", () => {
-            this.view.eventTable.removeChild(row);
-            this.view.appendEvent(eventItem);
-          });
+            cancelButton.addEventListener("click", () => {
+              this.view.eventTable.removeChild(row);
+              this.view.appendEvent(eventItem);
+            });
+
+            return; // Exit the event listener since the button was found
+          }
+        } else if (targetElement.matches(".delete-button")) {
+          const eventId = targetElement.dataset.eventId;
+          const eventItem = this.model.getEventById(eventId);
+
+          if (eventItem) {
+            this.model.deleteEvent(eventItem.id);
+            this.view.deleteEventItem(eventItem.id);
+
+            return; // Exit the event listener since the button was found
+          }
         }
-      } else if (event.target.matches(".delete-button")) {
-        const eventId = event.target.dataset.eventId;
-        const eventItem = this.model.getEventById(eventId);
-        if (eventItem) {
-          this.model.deleteEvent(eventItem.id);
-          this.view.deleteEventItem(eventItem.id);
-        }
+
+        // Move up to the parent element
+        targetElement = targetElement.parentElement;
       }
     });
   }
