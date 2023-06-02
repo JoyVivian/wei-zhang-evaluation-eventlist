@@ -147,8 +147,10 @@ class EventView {
     const row = document.createElement("tr");
 
     // Set the style of the row.
-    row.setAttribute("style", "background-color: #e6e2d3;");
-    row.style.marginBottom = "10px";
+    row.setAttribute(
+      "style",
+      "background-color: #e6e2d3; margin-bottom: 10px;"
+    );
 
     const eventCell = document.createElement("td");
     const startCell = document.createElement("td");
@@ -248,40 +250,6 @@ class EventView {
       this.appendEvent(event);
     });
   }
-
-  // addEmptyEvent() {
-  //   const row = document.createElement("tr");
-  //   const inputCell = document.createElement("td");
-  //   const startCell = document.createElement("td");
-  //   const endCell = document.createElement("td");
-  //   const actionsCell = document.createElement("td");
-  //   const saveButton = document.createElement("button");
-  //   const cancelButton = document.createElement("button");
-  //   const inputField = document.createElement("input");
-  //   const startDate = document.createElement("input");
-  //   const endDate = document.createElement("input");
-
-  //   inputField.type = "text";
-  //   startDate.type = "date";
-  //   endDate.type = "date";
-  //   saveButton.textContent = "Save";
-  //   cancelButton.textContent = "Cancel";
-
-  //   inputCell.appendChild(inputField);
-  //   startCell.appendChild(startDate);
-  //   endCell.appendChild(endDate);
-  //   actionsCell.appendChild(saveButton);
-  //   actionsCell.appendChild(cancelButton);
-
-  //   row.appendChild(inputCell);
-  //   row.appendChild(startCell);
-  //   row.appendChild(endCell);
-  //   row.appendChild(actionsCell);
-
-  //   this.eventTable.appendChild(row);
-
-  //   return { row, inputField, startDate, endDate, saveButton, cancelButton };
-  // }
 
   addEmptyEvent() {
     const row = document.createElement("tr");
