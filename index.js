@@ -102,6 +102,7 @@ class EventModel {
 class EventView {
   constructor() {
     this.eventTable = document.getElementById("event-table");
+    this.addEventButton = document.getElementById("add-event-button");
   }
 
   // Create new event item.
@@ -142,6 +143,40 @@ class EventView {
       this.appendEvent(event);
     });
   }
+
+  addEmptyEvent() {
+    const row = document.createElement("tr");
+    const inputCell = document.createElement("td");
+    const startCell = document.createElement("td");
+    const endCell = document.createElement("td");
+    const actionsCell = document.createElement("td");
+    const saveButton = document.createElement("button");
+    const cancelButton = document.createElement("button");
+    const inputField = document.createElement("input");
+    const startDate = document.createElement("input");
+    const endDate = document.createElement("input");
+
+    inputField.type = "text";
+    startDate.type = "date";
+    endDate.type = "date";
+    saveButton.textContent = "Save";
+    cancelButton.textContent = "Cancel";
+
+    inputCell.appendChild(inputField);
+    startCell.appendChild(startDate);
+    endCell.appendChild(endDate);
+    actionsCell.appendChild(saveButton);
+    actionsCell.appendChild(cancelButton);
+
+    row.appendChild(inputCell);
+    row.appendChild(startCell);
+    row.appendChild(endCell);
+    row.appendChild(actionsCell);
+
+    this.eventTable.appendChild(row);
+
+    return { row, inputField, startDate, endDate, saveButton, cancelButton };
+  }
 }
 
 // MVC - Controller
@@ -163,7 +198,31 @@ class EventController {
     this.setUpDeleteEvent();
   }
 
-  setUpAddEvent() {}
+  setUpAddEvent() {
+    this.view.addEventButton.addEventListener("click", () => {
+      const { inputField, startDate, endDate, saveButton, cancelButton, row } =
+        this.view.addEmptyEvent();
+
+      saveButton.addEventListener("click", async () => {
+        const newEvent = {
+          eventName: inputField.value,
+          startDate: startDate.value,
+          endDate: endDate.value,
+        };
+        // first add event to the model
+        const addedEvent = await this.model.addEvent(newEvent);
+        // then remove the input fields row from the view
+        this.view.eventTable.removeChild(row);
+        // then append the newly created event to the table
+        this.view.appendEvent(addedEvent);
+      });
+
+      cancelButton.addEventListener("click", () => {
+        this.view.eventTable.removeChild(row);
+      });
+    });
+  }
+
   setUpDeleteEvent() {}
 }
 
