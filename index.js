@@ -211,6 +211,13 @@ class EventController {
         this.view.addEmptyEvent();
 
       saveButton.addEventListener("click", async () => {
+        // Check if input fields are empty
+        if (!inputField.value || !startDate.value || !endDate.value) {
+          alert("All fields must be filled out!");
+
+          return;
+        }
+
         const newEvent = {
           eventName: inputField.value,
           startDate: startDate.value,
