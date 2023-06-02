@@ -50,10 +50,31 @@ const API = (function () {
     }
   };
 
+  const updateEventById = async (id, updatedEvent) => {
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedEvent),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return {
     getEvents,
     postEvent,
     deleteEventById,
+    updateEventById,
   };
 })();
 
@@ -96,6 +117,23 @@ class EventModel {
       console.log(error);
     }
   }
+
+  // Edit existing event in the model.
+  async editEvent(id, updatedEvent) {
+    try {
+      const event = await API.updateEventById(id, updatedEvent);
+      this.#events = this.#events.map((e) => (e.id === id ? event : e));
+      return event;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // Get event by ID.
+  getEventById(id) {
+    const eventId = parseInt(id, 10); // Convert the id to a number
+    return this.#events.find((event) => event.id === eventId);
+  }
 }
 
 // MVC - View
@@ -119,8 +157,14 @@ class EventView {
     startCell.textContent = event.startDate;
     endCell.textContent = event.endDate;
     editButton.textContent = "Edit";
+    // editButton.id = `edit-button-${event.id}`;
+    editButton.classList.add("edit-button");
+    editButton.dataset.eventId = event.id;
+
     deleteButton.textContent = "Delete";
-    deleteButton.id = `delete-button-${event.id}`;
+    // deleteButton.id = `delete-button-${event.id}`;
+    deleteButton.classList.add("delete-button");
+    deleteButton.dataset.eventId = event.id;
 
     actionsCell.appendChild(editButton);
     actionsCell.appendChild(deleteButton);
@@ -184,6 +228,22 @@ class EventView {
     const row = document.getElementById(`event-row-${id}`);
     this.eventTable.removeChild(row);
   }
+
+  editEventItem(event) {
+    const curRow = document.getElementById(`event-row-${event.id}`);
+    const { row, inputField, startDate, endDate, saveButton, cancelButton } =
+      this.addEmptyEvent();
+
+    // Set input fields to the current event values
+    inputField.value = event.eventName;
+    startDate.value = event.startDate;
+    endDate.value = event.endDate;
+
+    // Replace the current row with the new row
+    this.eventTable.replaceChild(row, curRow);
+
+    return { inputField, startDate, endDate, saveButton, cancelButton, row };
+  }
 }
 
 // MVC - Controller
@@ -202,7 +262,9 @@ class EventController {
 
   setUpEventListeners() {
     this.setUpAddEvent();
-    this.setUpDeleteEvent();
+    // this.setUpDeleteEvent();
+    // this.setUpEditEvent();
+    this.setUpEventTable();
   }
 
   setUpAddEvent() {
@@ -237,13 +299,52 @@ class EventController {
     });
   }
 
-  setUpDeleteEvent() {
-    this.model.getEvents().forEach((event) => {
-      const deleteButton = document.getElementById(`delete-button-${event.id}`);
-      deleteButton.addEventListener("click", () => {
-        this.model.deleteEvent(event.id);
-        this.view.deleteEventItem(event.id);
-      });
+  setUpEventTable() {
+    this.view.eventTable.addEventListener("click", (event) => {
+      if (event.target.matches(".edit-button")) {
+        const eventId = event.target.dataset.eventId;
+        const eventItem = this.model.getEventById(eventId);
+
+        console.log(eventItem);
+
+        if (eventItem) {
+          const {
+            inputField,
+            startDate,
+            endDate,
+            saveButton,
+            cancelButton,
+            row,
+          } = this.view.editEventItem(eventItem);
+
+          saveButton.addEventListener("click", async () => {
+            const updatedEvent = {
+              eventName: inputField.value,
+              startDate: startDate.value,
+              endDate: endDate.value,
+            };
+
+            const editedEvent = await this.model.editEvent(
+              eventItem.id,
+              updatedEvent
+            );
+            this.view.eventTable.removeChild(row);
+            this.view.appendEvent(editedEvent);
+          });
+
+          cancelButton.addEventListener("click", () => {
+            this.view.eventTable.removeChild(row);
+            this.view.appendEvent(eventItem);
+          });
+        }
+      } else if (event.target.matches(".delete-button")) {
+        const eventId = event.target.dataset.eventId;
+        const eventItem = this.model.getEventById(eventId);
+        if (eventItem) {
+          this.model.deleteEvent(eventItem.id);
+          this.view.deleteEventItem(eventItem.id);
+        }
+      }
     });
   }
 }
