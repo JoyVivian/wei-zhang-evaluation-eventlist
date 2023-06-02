@@ -9,8 +9,7 @@ const API = (function () {
         throw new Error(response.statusText);
       }
 
-      const data = await response.json();
-      return data;
+      return await response.json();
     } catch (error) {
       console.error(error);
     }
@@ -100,10 +99,73 @@ class EventModel {
 }
 
 // MVC - View
-class EventView {}
+class EventView {
+  constructor() {
+    this.eventTable = document.getElementById("event-table");
+  }
+
+  // Create new event item.
+  createEventItem(event) {
+    const row = document.createElement("tr");
+    const eventCell = document.createElement("td");
+    const startCell = document.createElement("td");
+    const endCell = document.createElement("td");
+    const actionsCell = document.createElement("td");
+    const editButton = document.createElement("button");
+    const deleteButton = document.createElement("button");
+
+    eventCell.textContent = event.eventName;
+    startCell.textContent = event.startDate;
+    endCell.textContent = event.endDate;
+    editButton.textContent = "Edit";
+    deleteButton.textContent = "Delete";
+
+    actionsCell.appendChild(editButton);
+    actionsCell.appendChild(deleteButton);
+
+    row.appendChild(eventCell);
+    row.appendChild(startCell);
+    row.appendChild(endCell);
+    row.appendChild(actionsCell);
+
+    return row;
+  }
+
+  // Append new event to the DOM.
+  appendEvent(event) {
+    const eventItem = this.createEventItem(event);
+    this.eventTable.appendChild(eventItem);
+  }
+
+  renderEvents(events) {
+    events.forEach((event) => {
+      this.appendEvent(event);
+    });
+  }
+}
 
 // MVC - Controller
-class EventController {}
+class EventController {
+  constructor(model, view) {
+    this.model = model;
+    this.view = view;
+    this.init();
+  }
+
+  async init() {
+    await this.model.fetchEvents();
+    this.view.renderEvents(this.model.getEvents());
+    this.setUpEventListeners();
+  }
+
+  setUpEventListeners() {
+    this.setUpAddEvent();
+    this.setUpDeleteEvent();
+  }
+
+  setUpAddEvent() {}
+  setUpDeleteEvent() {}
+}
 
 // Driver Code
 const model = new EventModel();
