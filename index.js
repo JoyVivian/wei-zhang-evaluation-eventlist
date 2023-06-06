@@ -1,6 +1,7 @@
 const API = (function () {
   const API_URL = "http://localhost:3000/events";
 
+  // Using fetch to get all events from the server.
   const getEvents = async () => {
     try {
       const response = await fetch(`${API_URL}`);
@@ -15,6 +16,7 @@ const API = (function () {
     }
   };
 
+  // Using fetch to post an event to the server.
   const postEvent = async (newEvent) => {
     try {
       const response = await fetch(`${API_URL}`, {
@@ -35,6 +37,7 @@ const API = (function () {
     }
   };
 
+  // Using fetch to delete an event from the server.
   const deleteEventById = async (id) => {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
@@ -50,6 +53,7 @@ const API = (function () {
     }
   };
 
+  // Using fetch to update an event from the server.
   const updateEventById = async (id, updatedEvent) => {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
@@ -84,6 +88,7 @@ class EventModel {
 
   constructor() {}
 
+  // Getter method to get all the events.
   getEvents() {
     return this.#events;
   }
@@ -131,6 +136,7 @@ class EventModel {
 
   // Get event by ID.
   getEventById(id) {
+    // If we do not have the code below, we will get undefined in return value because we use === operator.
     const eventId = parseInt(id, 10); // Convert the id to a number
     return this.#events.find((event) => event.id === eventId);
   }
@@ -152,6 +158,7 @@ class EventView {
       "background-color: #e6e2d3; margin-bottom: 10px;"
     );
 
+    // Set each cell of the row
     const eventCell = document.createElement("td");
     const startCell = document.createElement("td");
     const endCell = document.createElement("td");
@@ -159,28 +166,38 @@ class EventView {
     const editButton = document.createElement("button");
     const deleteButton = document.createElement("button");
 
+    // Style the edit button
     editButton.setAttribute(
       "style",
       "background-color: #008cba; border: none; padding: 0; border-radius: 4px; cursor: pointer; margin-left: 1px; margin-right: 1px; width: 24px; height: 24px;"
     );
 
+    // Create a svg element.
     const svgIcon = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "svg"
     );
+
+    // Create a path element.
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
 
+    // Set the text of each cell in the row.
     eventCell.textContent = event.eventName;
     startCell.textContent = event.startDate;
     endCell.textContent = event.endDate;
 
+    // Set the attributes of the svg element.
+    // It allows assistive technologies and user agents to skip over those elements during keyboard navigation.
     svgIcon.setAttribute("focusable", "false");
+
+    // Indicates that the SVG content is not  relevant or meaningful for screen readers or other assistive technologies.
     svgIcon.setAttribute("aria-hidden", "true");
     svgIcon.setAttribute("viewBox", "0 0 24 24");
     svgIcon.setAttribute("data-testid", "EditIcon");
     svgIcon.setAttribute("aria-label", "fontSize small");
     svgIcon.setAttribute("fill", "white");
 
+    // Set the attributes of the path element.
     path.setAttribute(
       "d",
       "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
@@ -188,14 +205,13 @@ class EventView {
 
     // editButton.id = `edit-button-${event.id}`;
     editButton.classList.add("edit-button");
+
+    // Set custom data attributes for the edit button.
     editButton.dataset.eventId = event.id;
     svgIcon.appendChild(path);
     editButton.appendChild(svgIcon);
 
-    // deleteButton.textContent = "Delete";
-    // deleteButton.classList.add("delete-button");
-    // deleteButton.dataset.eventId = event.id;
-
+    // Style the delete button. Same as edit button.
     deleteButton.setAttribute(
       "style",
       "background-color: #dc3545; border: none; padding: 0; border-radius: 4px; cursor: pointer; margin-left: 1px; margin-right: 1px; width: 24px; height: 24px;"
@@ -234,6 +250,8 @@ class EventView {
     row.appendChild(startCell);
     row.appendChild(endCell);
     row.appendChild(actionsCell);
+
+    // Used for deleting the event.
     row.id = `event-row-${event.id}`;
 
     return row;
@@ -251,18 +269,27 @@ class EventView {
     });
   }
 
+  // Used to edit and add events.
   addEmptyEvent() {
+    // Create a new event row.
     const row = document.createElement("tr");
+
+    // Create each cell for a new event.
     const inputCell = document.createElement("td");
     const startCell = document.createElement("td");
     const endCell = document.createElement("td");
     const actionsCell = document.createElement("td");
+
+    // Create two action buttons save and cancel.
     const saveButton = document.createElement("button");
     const cancelButton = document.createElement("button");
+
+    // Create three input fields for the new event.
     const inputField = document.createElement("input");
     const startDate = document.createElement("input");
     const endDate = document.createElement("input");
 
+    // Set input field attributes.
     inputField.type = "text";
     startDate.type = "date";
     endDate.type = "date";
@@ -280,6 +307,11 @@ class EventView {
     saveButton.style.display = "flex";
     saveButton.style.justifyContent = "center";
     saveButton.style.alignItems = "center";
+
+    // A more convient way to set svg attributes
+    // Not recommended because using innerHTML instead of setAttribute.
+    // It is a dangerous way to set svg attributes.
+    // Valunrable to HTML injection.
     saveButton.innerHTML =
       '<svg focusable viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M12 6V18M18 12H6" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
@@ -297,9 +329,6 @@ class EventView {
     cancelButton.style.justifyContent = "center";
     cancelButton.style.alignItems = "center";
     cancelButton.style.backgroundColor = "#dc3545";
-
-    // cancelButton.innerHTML =
-    //   '<svg focusable="false" aria-hidden="true" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M19.587 16.001l6.096 6.096c0.396 0.396 0.396 1.039 0 1.435l-2.151 2.151c-0.396 0.396-1.038 0.396-1.435 0l-6.097-6.096-6.097 6.096c-0.396 0.396-1.038 0.396-1.434 0l-2.152-2.151c-0.396-0.396-0.396-1.038 0-1.435l6.097-6.096-6.097-6.097c-0.396-0.396-0.396-1.039 0-1.435l2.153-2.151c0.396-0.396 1.038-0.396 1.434 0l6.096 6.097 6.097-6.097c0.396-0.396 1.038-0.396 1.435 0l2.151 2.152c0.396 0.396 0.396 1.038 0 1.435l-6.096 6.096z"></path></svg>';
 
     cancelButton.innerHTML =
       '<svg focusable="false" aria-hidden="true" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M19.587 16.001l6.096 6.096c0.396 0.396 0.396 1.039 0 1.435l-2.151 2.151c-0.396 0.396-1.038 0.396-1.435 0l-6.097-6.096-6.097 6.096c-0.396 0.396-1.038 0.396-1.434 0l-2.152-2.151c-0.396-0.396-0.396-1.038 0-1.435l6.097-6.096-6.097-6.097c-0.396-0.396-0.396-1.039 0-1.435l2.153-2.151c0.396-0.396 1.038-0.396 1.434 0l6.096 6.097 6.097-6.097c0.396-0.396 1.038-0.396 1.435 0l2.151 2.152c0.396 0.396 0.396 1.038 0 1.435l-6.096 6.096z" fill="#ffffff"></path></svg>';
@@ -323,11 +352,13 @@ class EventView {
     return { row, inputField, startDate, endDate, saveButton, cancelButton };
   }
 
+  // Delete an event from the DOM.
   deleteEventItem(id) {
     const row = document.getElementById(`event-row-${id}`);
     this.eventTable.removeChild(row);
   }
 
+  // Edit an event in the DOM.
   editEventItem(event) {
     const curRow = document.getElementById(`event-row-${event.id}`);
     const { row, inputField, startDate, endDate, saveButton, cancelButton } =
@@ -397,55 +428,6 @@ class EventController {
       });
     });
   }
-
-  // setUpEventTable() {
-  //   this.view.eventTable.addEventListener("click", (event) => {
-  //     if (event.target.matches(".edit-button")) {
-  //       const eventId = event.target.dataset.eventId;
-  //       const eventItem = this.model.getEventById(eventId);
-
-  //       console.log(eventItem);
-
-  //       if (eventItem) {
-  //         const {
-  //           inputField,
-  //           startDate,
-  //           endDate,
-  //           saveButton,
-  //           cancelButton,
-  //           row,
-  //         } = this.view.editEventItem(eventItem);
-
-  //         saveButton.addEventListener("click", async () => {
-  //           const updatedEvent = {
-  //             eventName: inputField.value,
-  //             startDate: startDate.value,
-  //             endDate: endDate.value,
-  //           };
-
-  //           const editedEvent = await this.model.editEvent(
-  //             eventItem.id,
-  //             updatedEvent
-  //           );
-  //           this.view.eventTable.removeChild(row);
-  //           this.view.appendEvent(editedEvent);
-  //         });
-
-  //         cancelButton.addEventListener("click", () => {
-  //           this.view.eventTable.removeChild(row);
-  //           this.view.appendEvent(eventItem);
-  //         });
-  //       }
-  //     } else if (event.target.matches(".delete-button")) {
-  //       const eventId = event.target.dataset.eventId;
-  //       const eventItem = this.model.getEventById(eventId);
-  //       if (eventItem) {
-  //         this.model.deleteEvent(eventItem.id);
-  //         this.view.deleteEventItem(eventItem.id);
-  //       }
-  //     }
-  //   });
-  // }
 
   setUpEventTable() {
     this.view.eventTable.addEventListener("click", (event) => {
